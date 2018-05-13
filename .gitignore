@@ -7,3 +7,6 @@ src/SpriteTextRenderer.Veldrid/obj/
 src/SpriteTextRenderer/bin/
 src/SpriteTextRenderer/obj/
 src/SampleVeldrid/obj/
+src/SpriteTextRenderer.SharpDX/bin/
+src/SpriteTextRenderer.SharpDX/obj/
+src/packages/

@@ -1,12 +1,10 @@
-﻿using System;
-
-namespace SampleVeldrid
+﻿namespace Sample
 {
     class Program
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            new SharpDXSample().Run();
         }
     }
 }

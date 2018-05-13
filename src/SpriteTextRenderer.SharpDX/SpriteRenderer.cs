@@ -1,11 +1,20 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
-using Veldrid;
+using System.Text;
+using System.Threading.Tasks;
+using SharpDX.Direct3D11;
+using SharpDX.D3DCompiler;
+using SharpDX;
+using Buffer = SharpDX.Direct3D11.Buffer;
+using SharpDX.Direct3D;
+using SpriteTextRenderer;
 
-namespace SpriteTextRenderer.Veldrid
+
+namespace SpriteTextRenderer.SharpDX
 {
     /// <summary>
-    /// This class is responsible for rendering 2D sprites using Veldrid. Typically, only one instance of this class is necessary.
+    /// This class is responsible for rendering 2D sprites using SharpDX. Typically, only one instance of this class is necessary.
     /// </summary>
     public class SpriteRenderer : SpriteTextRenderer.SpriteRenderer
     {
@@ -39,7 +48,7 @@ namespace SpriteTextRenderer.Veldrid
             Initialize();
         }
 
-        #region ### Private Veldrid members
+        #region ### Private SharpDX members
         Effect fx;
         EffectPass pass;
         EffectShaderResourceVariable textureVariable;
@@ -85,7 +94,7 @@ namespace SpriteTextRenderer.Veldrid
         /// <param name="size">Size of the texture in the chosen coordinate system. The size is specified in the screen's coordinate system.</param>
         /// <param name="coordinateType">A custom coordinate system in which to draw the texture</param>
         /// <param name="color">The color with which to multiply the texture</param>
-        public void Draw(ShaderResourceView texture, Vector2 position, Vector2 size, RgbaFloat color, CoordinateType coordinateType)
+        public void Draw(ShaderResourceView texture, Vector2 position, Vector2 size, Color4 color, CoordinateType coordinateType)
         {
             base.Draw(texture, position.ToSTRVector(), size.ToSTRVector(), color.ToSTRColor(), coordinateType);
         }
@@ -100,7 +109,7 @@ namespace SpriteTextRenderer.Veldrid
         /// <param name="rotationAngle">The angle in radians to rotate the texture. Positive values mean counter-clockwise rotation. Rotations can only be applied for relative or absolute coordinates. Consider using the Degrees or Radians helper structs.</param>
         /// <param name="coordinateType">A custom coordinate system in which to draw the texture</param>
         /// <param name="color">The color with which to multiply the texture</param>
-        public void Draw(ShaderResourceView texture, Vector2 position, Vector2 size, Vector2 center, double rotationAngle, RgbaFloat color, CoordinateType coordinateType)
+        public void Draw(ShaderResourceView texture, Vector2 position, Vector2 size, Vector2 center, double rotationAngle, Color4 color, CoordinateType coordinateType)
         {
             base.Draw(texture, position.ToSTRVector(), size.ToSTRVector(), center.ToSTRVector(), rotationAngle, color.ToSTRColor(), coordinateType);
         }
@@ -117,7 +126,7 @@ namespace SpriteTextRenderer.Veldrid
         /// <param name="color">The color with which to multiply the texture</param>
         /// <param name="texCoords">Texture coordinates for the top left corner</param>
         /// <param name="texCoordsSize">Size of the region in texture coordinates</param>
-        public void Draw(ShaderResourceView texture, Vector2 position, Vector2 size, Vector2 center, double rotationAngle, Vector2 texCoords, Vector2 texCoordsSize, RgbaFloat color, CoordinateType coordinateType)
+        public void Draw(ShaderResourceView texture, Vector2 position, Vector2 size, Vector2 center, double rotationAngle, Vector2 texCoords, Vector2 texCoordsSize, Color4 color, CoordinateType coordinateType)
         {
             base.Draw(texture, position.ToSTRVector(), size.ToSTRVector(), center.ToSTRVector(), rotationAngle, texCoords.ToSTRVector(), texCoordsSize.ToSTRVector(), color.ToSTRColor(), coordinateType);
         }
@@ -132,7 +141,7 @@ namespace SpriteTextRenderer.Veldrid
         /// <param name="color">The color with which to multiply the texture</param>
         /// <param name="texCoords">Texture coordinates for the top left corner</param>
         /// <param name="texCoordsSize">Size of the region in texture coordinates</param>
-        public void Draw(ShaderResourceView texture, Vector2 position, Vector2 size, Vector2 texCoords, Vector2 texCoordsSize, RgbaFloat color, CoordinateType coordinateType)
+        public void Draw(ShaderResourceView texture, Vector2 position, Vector2 size, Vector2 texCoords, Vector2 texCoordsSize, Color4 color, CoordinateType coordinateType)
         {
             base.Draw(texture, position.ToSTRVector(), size.ToSTRVector(), STRVector.Zero, 0.0, texCoords.ToSTRVector(), texCoordsSize.ToSTRVector(), color.ToSTRColor(), coordinateType);
         }
@@ -142,7 +151,7 @@ namespace SpriteTextRenderer.Veldrid
 
         protected override STRViewport QueryViewport()
         {
-            return device.ImmediateContext.Rasterizer.GetViewports()[0].ToSTRViewport();
+            return device.ImmediateContext.Rasterizer.GetViewports<ViewportF>()[0].ToSTRViewport();
         }
 
         protected override void CompileEffectAndGetVariable(string hlslSource, string variableName)
@@ -167,7 +176,7 @@ namespace SpriteTextRenderer.Veldrid
 
         protected override void CreateInputLayout(STRInputElement[] elements)
         {
-            var specificElements = elements.Select(e => e.ToVeldridInputElement()).ToArray();
+            var specificElements = elements.Select(e => e.ToSharpDXInputElement()).ToArray();
             inputLayout = new InputLayout(device, pass.Description.Signature, specificElements);
             inputLayout.DebugName = "Input Layout for Sprites";
         }

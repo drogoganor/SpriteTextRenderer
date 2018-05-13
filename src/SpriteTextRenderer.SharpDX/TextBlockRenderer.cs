@@ -1,15 +1,21 @@
 ﻿using System;
-using System.Numerics;
-using Veldrid;
+using SharpDX.DirectWrite;
+using SharpDX.Direct2D1;
+using SharpDX.DXGI;
+using SharpDX.Direct3D11;
+using SharpDX;
+using SharpDX.Direct3D;
 
-namespace SpriteTextRenderer.Veldrid
+namespace SpriteTextRenderer.SharpDX
 {
     /// <summary>
-    /// This class is responsible for rendering arbitrary text using Veldrid. Every TextRenderer is specialized for a specific font and relies on
+    /// This class is responsible for rendering arbitrary text using SharpDX. Every TextRenderer is specialized for a specific font and relies on
     /// a SpriteRenderer for rendering the text.
     /// </summary>
     public class TextBlockRenderer : SpriteTextRenderer.TextBlockRenderer
     {
+        public static IntPtr RenderHandle { get; set; }
+
         private RenderTargetProperties rtp;
 
         /// <summary>
@@ -22,8 +28,8 @@ namespace SpriteTextRenderer.Veldrid
         /// <param name="fontStretch">Font stretch parameter</param>
         /// <param name="fontStyle">Font style parameter</param>
         /// <param name="fontWeight">Font weight parameter</param>
-        public TextBlockRenderer(SpriteRenderer sprite, String fontName, global::Veldrid.DirectWrite.FontWeight fontWeight,
-            global::Veldrid.DirectWrite.FontStyle fontStyle, FontStretch fontStretch, float fontSize)
+        public TextBlockRenderer(SpriteRenderer sprite, String fontName, global::SharpDX.DirectWrite.FontWeight fontWeight,
+            global::SharpDX.DirectWrite.FontStyle fontStyle, FontStretch fontStretch, float fontSize)
             : base(sprite, fontSize)
         {
             System.Threading.Monitor.Enter(sprite.Device);
@@ -35,11 +41,11 @@ namespace SpriteTextRenderer.Veldrid
                     DpiX = 96,
                     DpiY = 96,
                     Type = RenderTargetType.Default,
-                    PixelFormat = new PixelFormat(Format.R8G8B8A8_UNorm, global::Veldrid.Direct2D1.AlphaMode.Premultiplied),
-                    MinLevel = FeatureLevel.Level_10
+                    PixelFormat = new PixelFormat(Format.R8G8B8A8_UNorm, global::SharpDX.Direct2D1.AlphaMode.Premultiplied),
+                    MinLevel = global::SharpDX.Direct2D1.FeatureLevel.Level_10
                 };
 
-                font = new TextFormat((global::Veldrid.DirectWrite.Factory)WriteFactory, fontName, fontWeight, fontStyle, fontStretch, fontSize);
+                font = new TextFormat((global::SharpDX.DirectWrite.Factory)WriteFactory, fontName, fontWeight, fontStyle, fontStretch, fontSize);
             }
             finally
             {
@@ -60,7 +66,7 @@ namespace SpriteTextRenderer.Veldrid
         /// <param name="color">The color in which to draw the text</param>
         /// <param name="coordinateType">The chosen coordinate system</param>
         /// <returns>The StringMetrics for the rendered text</returns>
-        public StringMetrics DrawString(string text, Vector2 position, float realFontSize, RgbaFloat color, CoordinateType coordinateType)
+        public StringMetrics DrawString(string text, Vector2 position, float realFontSize, Color4 color, CoordinateType coordinateType)
         {
             return base.DrawString(text, position.ToSTRVector(), realFontSize, color.ToSTRColor(), coordinateType);
         }
@@ -72,7 +78,7 @@ namespace SpriteTextRenderer.Veldrid
         /// <param name="position">A position in absolute coordinates where the top left corner of the first character will be</param>
         /// <param name="color">The color in which to draw the text</param>
         /// <returns>The StringMetrics for the rendered text</returns>
-        public StringMetrics DrawString(string text, Vector2 position, RgbaFloat color)
+        public StringMetrics DrawString(string text, Vector2 position, Color4 color)
         {
             return base.DrawString(text, position.ToSTRVector(), color.ToSTRColor());
         }
@@ -87,7 +93,7 @@ namespace SpriteTextRenderer.Veldrid
         /// <param name="color">The color in which to draw the text</param>
         /// <param name="coordinateType">The chosen coordinate system</param>
         /// <returns>The StringMetrics for the rendered text</returns>
-        public StringMetrics DrawString(string text, System.Drawing.RectangleF rect, TextAlignment align, float realFontSize, RgbaFloat color, CoordinateType coordinateType)
+        public StringMetrics DrawString(string text, System.Drawing.RectangleF rect, TextAlignment align, float realFontSize, Color4 color, CoordinateType coordinateType)
         {
             return base.DrawString(text, rect, align, realFontSize, color.ToSTRColor(), coordinateType);
         }
@@ -100,7 +106,7 @@ namespace SpriteTextRenderer.Veldrid
         /// <param name="align">Alignment in rectangle</param>
         /// <param name="color">Color in which to draw the text</param>
         /// <returns>The StringMetrics for the rendered text</returns>
-        public StringMetrics DrawString(string text, System.Drawing.RectangleF rect, TextAlignment align, RgbaFloat color)
+        public StringMetrics DrawString(string text, System.Drawing.RectangleF rect, TextAlignment align, Color4 color)
         {
             return base.DrawString(text, rect, align, color.ToSTRColor());
         }
@@ -109,7 +115,7 @@ namespace SpriteTextRenderer.Veldrid
 
         protected override STRLayout GetTextLayout(string s)
         {
-            return new TextLayout((global::Veldrid.DirectWrite.Factory)WriteFactory, s, (TextFormat)font,1.0f,1.0f).ToSTRLayout();
+            return new TextLayout((global::SharpDX.DirectWrite.Factory)WriteFactory, s, (TextFormat)font,1.0f,1.0f).ToSTRLayout();
         }
 
         protected override IDisposable CreateFontMapTexture(int width, int height, CharRenderCall[] drawCalls)
@@ -128,7 +134,7 @@ namespace SpriteTextRenderer.Veldrid
                 Usage = ResourceUsage.Default
             };
 
-            var device10 = (global::Veldrid.Direct3D11.Device)D3DDevice10;
+            var device10 = (global::SharpDX.Direct3D11.Device)D3DDevice10;
             var texture = new Texture2D(device10, TexDesc);
 
             var rtv = new RenderTargetView(device10, texture);
@@ -136,7 +142,7 @@ namespace SpriteTextRenderer.Veldrid
 
 
             Surface surface = texture.QueryInterface<Surface>();
-            var target = new RenderTarget((global::Veldrid.Direct2D1.Factory)D2DFactory, surface, rtp);
+            var target = new RenderTarget((global::SharpDX.Direct2D1.Factory)D2DFactory, surface, rtp);
             var color = new SolidColorBrush(target, new Color4(1, 1, 1, 1));
 
             target.BeginDraw();
@@ -167,12 +173,12 @@ namespace SpriteTextRenderer.Veldrid
                 SampleDescription = new SampleDescription(1, 0),
                 Usage = ResourceUsage.Staging
             };
-            global::Veldrid.Direct3D11.Device device = (global::Veldrid.Direct3D11.Device) D3DDevice10;
+            global::SharpDX.Direct3D11.Device device = (global::SharpDX.Direct3D11.Device) D3DDevice10;
             var textureDummy = new Texture2D(device, textureDescDummy);
             DataStream dataStreamDummy = null;
             device.ImmediateContext.CopyResource(texture, textureDummy);
 
-            DataBox databox = device.ImmediateContext.MapSubresource(textureDummy, 0, 0, MapMode.Read, global::Veldrid.Direct3D11.MapFlags.None, out dataStreamDummy);
+            DataBox databox = device.ImmediateContext.MapSubresource(textureDummy, 0, 0, MapMode.Read, global::SharpDX.Direct3D11.MapFlags.None, out dataStreamDummy);
             dataStreamDummy.Dispose();
             textureDummy.Dispose();
             #endregion
@@ -185,35 +191,35 @@ namespace SpriteTextRenderer.Veldrid
 
         protected override void CreateDeviceCompatibleTexture(int width, int height, IDisposable texture10, out IDisposable texture11, out IDisposable srv11)
         {
-            var texture = (global::Veldrid.Direct3D11.Texture2D)texture10;
+            var texture = (global::SharpDX.Direct3D11.Texture2D)texture10;
             var device11 = ((SpriteRenderer)Sprite).Device;
 
             lock (device11)
             {
-                var dxgiResource = texture.QueryInterface<global::Veldrid.DXGI.Resource>();
+                var dxgiResource = texture.QueryInterface<global::SharpDX.DXGI.Resource>();
 
-                global::Veldrid.Direct3D11.Texture2D tex11;
+                global::SharpDX.Direct3D11.Texture2D tex11;
                 if (PixCompatible)
                 {
-                    tex11 = new global::Veldrid.Direct3D11.Texture2D(device11, new global::Veldrid.Direct3D11.Texture2DDescription()
+                    tex11 = new global::SharpDX.Direct3D11.Texture2D(device11, new global::SharpDX.Direct3D11.Texture2DDescription()
                     {
                         ArraySize = 1,
-                        BindFlags = global::Veldrid.Direct3D11.BindFlags.ShaderResource | global::Veldrid.Direct3D11.BindFlags.RenderTarget,
-                        CpuAccessFlags = global::Veldrid.Direct3D11.CpuAccessFlags.None,
+                        BindFlags = global::SharpDX.Direct3D11.BindFlags.ShaderResource | global::SharpDX.Direct3D11.BindFlags.RenderTarget,
+                        CpuAccessFlags = global::SharpDX.Direct3D11.CpuAccessFlags.None,
                         Format = Format.R8G8B8A8_UNorm,
                         Height = height,
                         Width = width,
                         MipLevels = 1,
-                        OptionFlags = global::Veldrid.Direct3D11.ResourceOptionFlags.Shared,
+                        OptionFlags = global::SharpDX.Direct3D11.ResourceOptionFlags.Shared,
                         SampleDescription = new SampleDescription(1, 0),
-                        Usage = global::Veldrid.Direct3D11.ResourceUsage.Default
+                        Usage = global::SharpDX.Direct3D11.ResourceUsage.Default
                     });
                 }
                 else
                 {
-                    tex11 = device11.OpenSharedResource<global::Veldrid.Direct3D11.Texture2D>(dxgiResource.SharedHandle);
+                    tex11 = device11.OpenSharedResource<global::SharpDX.Direct3D11.Texture2D>(dxgiResource.SharedHandle);
                 }
-                srv11 = new global::Veldrid.Direct3D11.ShaderResourceView(device11, tex11);
+                srv11 = new global::SharpDX.Direct3D11.ShaderResourceView(device11, tex11);
                 texture11 = tex11;
                 dxgiResource.Dispose();
             }
@@ -222,9 +228,14 @@ namespace SpriteTextRenderer.Veldrid
         protected override DeviceDescriptor CreateDevicesAndFactories()
         {
             DeviceDescriptor desc = new DeviceDescriptor();
-            desc.D3DDevice10 = new global::Veldrid.Direct3D11.Device(new global::Veldrid.DXGI.Factory().GetAdapter(0), DeviceCreationFlags.BgraSupport, global::Veldrid.Direct3D.FeatureLevel.Level_10_0);
-            desc.WriteFactory = new global::Veldrid.DirectWrite.Factory(global::Veldrid.DirectWrite.FactoryType.Shared);
-            desc.D2DFactory = new global::Veldrid.Direct2D1.Factory(global::Veldrid.Direct2D1.FactoryType.SingleThreaded);
+
+            var creationFlags = global::SharpDX.Direct3D11.DeviceCreationFlags.BgraSupport;
+            var featureLevels = global::SharpDX.Direct3D.FeatureLevel.Level_10_0;
+            using (var defaultDevice = new global::SharpDX.Direct3D11.Device(DriverType.Hardware, creationFlags, featureLevels))
+                desc.D3DDevice10 = defaultDevice.QueryInterface<global::SharpDX.Direct3D11.Device1>();
+
+            desc.WriteFactory = new global::SharpDX.DirectWrite.Factory(global::SharpDX.DirectWrite.FactoryType.Shared);
+            desc.D2DFactory = new global::SharpDX.Direct2D1.Factory(global::SharpDX.Direct2D1.FactoryType.SingleThreaded);
             return desc;
         }
     }

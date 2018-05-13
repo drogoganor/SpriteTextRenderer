@@ -127,10 +127,10 @@ namespace SpriteTextRenderer
         /// <param name="fontWeight">Font weight parameter</param>
         public TextBlockRenderer(SpriteRenderer sprite, float fontSize)
         {
-            AssertDevice();
-            IncRefCount();
             this.Sprite = sprite;
-            this._FontSize = fontSize;           
+            this._FontSize = fontSize;
+            AssertDevice();
+            IncRefCount();        
         }
 
         /// <summary>

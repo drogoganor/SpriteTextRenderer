@@ -1,20 +1,32 @@
-﻿using System;
+﻿using SharpDX;
+using SharpDX.Direct3D;
+using SharpDX.Direct3D11;
+using SharpDX.DirectWrite;
+using SharpDX.DXGI;
+using SharpDX.WIC;
+using SharpDX.Windows;
+using SpriteTextRenderer;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Sample
 {
-    class VeldridSample
+    class SharpDXSample
     {
-        Veldrid.Direct3D11.Device device;
+        SharpDX.Direct3D11.Device device;
         SwapChain swapChain;
         RenderTargetView renderView;
-        SpriteTextRenderer.Veldrid.SpriteRenderer sprite;
+        SpriteTextRenderer.SharpDX.SpriteRenderer sprite;
         public void Run()
         {
-            var form = new RenderForm(Helpers.GetFormTitle("Veldrid"));
+            var form = new RenderForm(Helpers.GetFormTitle("SharpDX"));
             form.Resize += form_Resize;
-            
+
             var desc = new SwapChainDescription()
             {
                 BufferCount = 1,
@@ -31,15 +43,23 @@ namespace Sample
                             FeatureLevel.Level_10_1,
                             FeatureLevel.Level_10_0
                         };
-            Veldrid.Direct3D11.Device.CreateWithSwapChain(DriverType.Hardware,
-                Veldrid.Direct3D11.DeviceCreationFlags.None, levels, desc, out device, out swapChain);
+            SharpDX.Direct3D11.Device.CreateWithSwapChain(DriverType.Hardware,
+                SharpDX.Direct3D11.DeviceCreationFlags.None, levels, desc, out device, out swapChain);
+
+
+
+            SpriteTextRenderer.SharpDX.TextBlockRenderer.RenderHandle = form.Handle;
+
+
+
+            device.QueryInterface<SharpDX.DXGI.Device>().GetParent<SharpDX.DXGI.Adapter>().GetParent<SharpDX.DXGI.Factory>().MakeWindowAssociation(form.Handle, WindowAssociationFlags.IgnoreAll);
             
-            device.QueryInterface<Veldrid.DXGI.Device>().GetParent<Veldrid.DXGI.Adapter>().GetParent<Veldrid.DXGI.Factory>().MakeWindowAssociation(form.Handle, WindowAssociationFlags.IgnoreAll);
 
             Resize(form.ClientSize);
 
-            sprite = new SpriteTextRenderer.Veldrid.SpriteRenderer(device);
-            var textBlock = new SpriteTextRenderer.Veldrid.TextBlockRenderer(sprite, "Arial", FontWeight.Bold, Veldrid.DirectWrite.FontStyle.Normal, FontStretch.Normal, 16);
+            sprite = new SpriteTextRenderer.SharpDX.SpriteRenderer(device);
+            var textBlock = new SpriteTextRenderer.SharpDX.TextBlockRenderer(sprite, "Arial", FontWeight.Bold, SharpDX.DirectWrite.FontStyle.Normal, FontStretch.Normal, 16);
+
 
             var sdxTexture = LoadTextureFromFile(device, "sdx.png");
             var srvTexture = new ShaderResourceView(device, sdxTexture);
@@ -53,7 +73,7 @@ namespace Sample
                 frameMonitor.Tick();
                 device.ImmediateContext.ClearRenderTargetView(renderView, Color.DarkBlue);
                 textBlock.DrawString("ABCDEFGHIJKLMNOPQRSTUVWXYZ" + Environment.NewLine + "abcdefghijklmnopqrstuvwxyz", Vector2.Zero, new Color4(1.0f, 1.0f, 0.0f,1.0f));
-                textBlock.DrawString("SDX SpriteTextRenderer sample" + Environment.NewLine + "(using Veldrid)", new System.Drawing.RectangleF(0, 0, form.ClientSize.Width, form.ClientSize.Height),
+                textBlock.DrawString("SDX SpriteTextRenderer sample" + Environment.NewLine + "(using SharpDX)", new System.Drawing.RectangleF(0, 0, form.ClientSize.Width, form.ClientSize.Height),
                     SpriteTextRenderer.TextAlignment.Right | SpriteTextRenderer.TextAlignment.Bottom, new Color4(1.0f, 1.0f, 0.0f, 1.0f));
 
                 textBlock.DrawString(frameMonitor.FPS.ToString("f2") + " FPS", new System.Drawing.RectangleF(0, 0, form.ClientSize.Width, form.ClientSize.Height),
@@ -105,12 +125,12 @@ namespace Sample
                 sprite.RefreshViewport();
         }
 
-        public static Texture2D LoadTextureFromFile(Veldrid.Direct3D11.Device aDevice, string aFullPath)
+        public static Texture2D LoadTextureFromFile(SharpDX.Direct3D11.Device aDevice, string aFullPath)
         {
             Texture2D result = null;
             ImagingFactory fac = new ImagingFactory();
 
-            BitmapDecoder bc = new Veldrid.WIC.BitmapDecoder(fac, aFullPath, DecodeOptions.CacheOnLoad);
+            BitmapDecoder bc = new SharpDX.WIC.BitmapDecoder(fac, aFullPath, DecodeOptions.CacheOnLoad);
             BitmapFrameDecode bfc = bc.GetFrame(0);
             FormatConverter fc = new FormatConverter(fac);
             System.Guid desiredFormat = PixelFormat.Format32bppBGRA;
@@ -133,7 +153,7 @@ namespace Sample
 
             Texture2DDescription fTextureDesc = new Texture2DDescription();
             fTextureDesc.CpuAccessFlags = CpuAccessFlags.None;
-            fTextureDesc.Format = Veldrid.DXGI.Format.B8G8R8A8_UNorm;
+            fTextureDesc.Format = SharpDX.DXGI.Format.B8G8R8A8_UNorm;
             fTextureDesc.Width = width;
             fTextureDesc.Height = height;
             fTextureDesc.Usage = ResourceUsage.Default;
@@ -141,7 +161,7 @@ namespace Sample
             fTextureDesc.ArraySize = 1;
             fTextureDesc.OptionFlags = ResourceOptionFlags.None;
             fTextureDesc.BindFlags = BindFlags.RenderTarget | BindFlags.ShaderResource;
-            fTextureDesc.SampleDescription = new Veldrid.DXGI.SampleDescription(1, 0);
+            fTextureDesc.SampleDescription = new SharpDX.DXGI.SampleDescription(1, 0);
 
             result = new Texture2D(aDevice,fTextureDesc, new DataBox[] { db });
             handle.Free();
