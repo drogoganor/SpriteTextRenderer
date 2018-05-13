@@ -1,0 +1,8 @@
+src/.vs/
+src/SampleSharpDX/bin/
+src/SampleSharpDX/obj/
+srcOld/
+src/SpriteTextRenderer.Veldrid/bin/
+src/SpriteTextRenderer.Veldrid/obj/
+src/SpriteTextRenderer/bin/
+src/SpriteTextRenderer/obj/
