@@ -1,7 +1,7 @@
 ﻿namespace SpriteTextRenderer
 {
     /// <summary>
-    /// The SpriteTextRenderer uses a library-independent input element structure because the base lib must not depend on either SlimDX or SharpDX
+    /// The SpriteTextRenderer uses a library-independent input element structure because the base lib must not depend on platform specific libraries
     /// </summary>
     public struct STRInputElement
     {

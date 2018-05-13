@@ -5,11 +5,9 @@ VisualStudioVersion = 15.0.27428.2043
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpriteTextRenderer", "SpriteTextRenderer\SpriteTextRenderer.csproj", "{6862E948-3FB2-4603-B04A-9A050E9F8809}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpriteTextRenderer.Veldrid", "SpriteTextRenderer.Veldrid\SpriteTextRenderer.Veldrid.csproj", "{EB4AF698-AE04-4151-A919-7E4CBCBBEF26}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpriteTextRenderer.Veldrid", "SpriteTextRenderer.Veldrid\SpriteTextRenderer.Veldrid.csproj", "{EB4AF698-AE04-4151-A919-7E4CBCBBEF26}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpriteTextRenderer.SharpDX", "SpriteTextRenderer.SharpDX\SpriteTextRenderer.SharpDX.csproj", "{96849702-FAE5-42E4-8BD1-E805ED4C3116}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleSharpDX", "SampleSharpDX\SampleSharpDX.csproj", "{8232C6EA-0863-4FF4-92CA-3A1BF484F004}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleVeldrid", "SampleVeldrid\SampleVeldrid.csproj", "{AA33DBDB-CA26-4157-A028-4375679019B7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,14 +23,10 @@ Global
 		{EB4AF698-AE04-4151-A919-7E4CBCBBEF26}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EB4AF698-AE04-4151-A919-7E4CBCBBEF26}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EB4AF698-AE04-4151-A919-7E4CBCBBEF26}.Release|Any CPU.Build.0 = Release|Any CPU
-		{96849702-FAE5-42E4-8BD1-E805ED4C3116}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{96849702-FAE5-42E4-8BD1-E805ED4C3116}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{96849702-FAE5-42E4-8BD1-E805ED4C3116}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{96849702-FAE5-42E4-8BD1-E805ED4C3116}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8232C6EA-0863-4FF4-92CA-3A1BF484F004}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8232C6EA-0863-4FF4-92CA-3A1BF484F004}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8232C6EA-0863-4FF4-92CA-3A1BF484F004}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8232C6EA-0863-4FF4-92CA-3A1BF484F004}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AA33DBDB-CA26-4157-A028-4375679019B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA33DBDB-CA26-4157-A028-4375679019B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA33DBDB-CA26-4157-A028-4375679019B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA33DBDB-CA26-4157-A028-4375679019B7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,18 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SlimDX.Direct3D11;
-using SlimDX.D3DCompiler;
-using SlimDX;
-using Buffer = SlimDX.Direct3D11.Buffer;
-using SpriteTextRenderer;
+using System.Numerics;
+using Veldrid;
 
-namespace SpriteTextRenderer.SlimDX
+namespace SpriteTextRenderer.Veldrid
 {
     /// <summary>
-    /// This class is responsible for rendering 2D sprites using SlimDX. Typically, only one instance of this class is necessary.
+    /// This class is responsible for rendering 2D sprites using Veldrid. Typically, only one instance of this class is necessary.
     /// </summary>
     public class SpriteRenderer : SpriteTextRenderer.SpriteRenderer
     {
@@ -36,7 +29,7 @@ namespace SpriteTextRenderer.SlimDX
             get { return Device.ImmediateContext.OutputMerger.DepthStencilState; }
             set { Device.ImmediateContext.OutputMerger.DepthStencilState = (DepthStencilState)value; }
         }
-
+        
         public SpriteRenderer(Device device, int bufferSize = 128)
             : base(bufferSize)
         {
@@ -45,11 +38,11 @@ namespace SpriteTextRenderer.SlimDX
 
             Initialize();
         }
-            
-        #region ### private SlimDX field memebers ###
+
+        #region ### Private Veldrid members
         Effect fx;
         EffectPass pass;
-        EffectResourceVariable textureVariable;
+        EffectShaderResourceVariable textureVariable;
         InputLayout inputLayout;
 
         Buffer vb;
@@ -92,7 +85,7 @@ namespace SpriteTextRenderer.SlimDX
         /// <param name="size">Size of the texture in the chosen coordinate system. The size is specified in the screen's coordinate system.</param>
         /// <param name="coordinateType">A custom coordinate system in which to draw the texture</param>
         /// <param name="color">The color with which to multiply the texture</param>
-        public void Draw(ShaderResourceView texture, Vector2 position, Vector2 size, Color4 color, CoordinateType coordinateType)
+        public void Draw(ShaderResourceView texture, Vector2 position, Vector2 size, RgbaFloat color, CoordinateType coordinateType)
         {
             base.Draw(texture, position.ToSTRVector(), size.ToSTRVector(), color.ToSTRColor(), coordinateType);
         }
@@ -107,7 +100,7 @@ namespace SpriteTextRenderer.SlimDX
         /// <param name="rotationAngle">The angle in radians to rotate the texture. Positive values mean counter-clockwise rotation. Rotations can only be applied for relative or absolute coordinates. Consider using the Degrees or Radians helper structs.</param>
         /// <param name="coordinateType">A custom coordinate system in which to draw the texture</param>
         /// <param name="color">The color with which to multiply the texture</param>
-        public void Draw(ShaderResourceView texture, Vector2 position, Vector2 size, Vector2 center, double rotationAngle, Color4 color, CoordinateType coordinateType)
+        public void Draw(ShaderResourceView texture, Vector2 position, Vector2 size, Vector2 center, double rotationAngle, RgbaFloat color, CoordinateType coordinateType)
         {
             base.Draw(texture, position.ToSTRVector(), size.ToSTRVector(), center.ToSTRVector(), rotationAngle, color.ToSTRColor(), coordinateType);
         }
@@ -124,11 +117,11 @@ namespace SpriteTextRenderer.SlimDX
         /// <param name="color">The color with which to multiply the texture</param>
         /// <param name="texCoords">Texture coordinates for the top left corner</param>
         /// <param name="texCoordsSize">Size of the region in texture coordinates</param>
-        public void Draw(ShaderResourceView texture, Vector2 position, Vector2 size, Vector2 center, double rotationAngle, Vector2 texCoords, Vector2 texCoordsSize, Color4 color, CoordinateType coordinateType)
+        public void Draw(ShaderResourceView texture, Vector2 position, Vector2 size, Vector2 center, double rotationAngle, Vector2 texCoords, Vector2 texCoordsSize, RgbaFloat color, CoordinateType coordinateType)
         {
             base.Draw(texture, position.ToSTRVector(), size.ToSTRVector(), center.ToSTRVector(), rotationAngle, texCoords.ToSTRVector(), texCoordsSize.ToSTRVector(), color.ToSTRColor(), coordinateType);
         }
-
+        
         /// <summary>
         /// Draws a region of a texture on the screen.
         /// </summary>
@@ -139,11 +132,10 @@ namespace SpriteTextRenderer.SlimDX
         /// <param name="color">The color with which to multiply the texture</param>
         /// <param name="texCoords">Texture coordinates for the top left corner</param>
         /// <param name="texCoordsSize">Size of the region in texture coordinates</param>
-        public void Draw(ShaderResourceView texture, Vector2 position, Vector2 size, Vector2 texCoords, Vector2 texCoordsSize, Color4 color, CoordinateType coordinateType)
+        public void Draw(ShaderResourceView texture, Vector2 position, Vector2 size, Vector2 texCoords, Vector2 texCoordsSize, RgbaFloat color, CoordinateType coordinateType)
         {
-            base.Draw(texture, position.ToSTRVector(), size.ToSTRVector(), STRVector.Zero, 0, texCoords.ToSTRVector(), texCoordsSize.ToSTRVector(), color.ToSTRColor(), coordinateType);
+            base.Draw(texture, position.ToSTRVector(), size.ToSTRVector(), STRVector.Zero, 0.0, texCoords.ToSTRVector(), texCoordsSize.ToSTRVector(), color.ToSTRColor(), coordinateType);
         }
-        
         #endregion
 
         #region ### Template method hooks ###
@@ -155,17 +147,27 @@ namespace SpriteTextRenderer.SlimDX
 
         protected override void CompileEffectAndGetVariable(string hlslSource, string variableName)
         {
-            using (var code = ShaderBytecode.Compile(hlslSource, "fx_5_0"))
+
+            ShaderFlags flags = ShaderFlags.None;
+
+            #if DEBUG
+                flags |= ShaderFlags.Debug | ShaderFlags.SkipOptimization;
+            #else
+                flags |= ShaderFlags.OptimizationLevel3;
+            #endif
+
+            using (var code = ShaderBytecode.Compile(hlslSource, "fx_5_0", flags, EffectFlags.None))
             {
                 this.fx = new Effect(device, code);
             }
+            
             this.pass = fx.GetTechniqueByIndex(0).GetPassByIndex(0);
-            textureVariable = fx.GetVariableByName(variableName).AsResource();
+            textureVariable = fx.GetVariableByName(variableName).AsShaderResource();
         }
 
         protected override void CreateInputLayout(STRInputElement[] elements)
         {
-            var specificElements = elements.Select(e => e.ToSlimDXInputElement()).ToArray();
+            var specificElements = elements.Select(e => e.ToVeldridInputElement()).ToArray();
             inputLayout = new InputLayout(device, pass.Description.Signature, specificElements);
             inputLayout.DebugName = "Input Layout for Sprites";
         }
@@ -184,27 +186,30 @@ namespace SpriteTextRenderer.SlimDX
                 IsDepthEnabled = false,
                 DepthWriteMask = DepthWriteMask.Zero
             };
-            depthStencilState = DepthStencilState.FromDescription(Device, dssd);
+            depthStencilState = new DepthStencilState(Device, dssd);
 
             var blendDesc = new BlendStateDescription();
             blendDesc.AlphaToCoverageEnable = false;
             blendDesc.IndependentBlendEnable = false;
-            blendDesc.RenderTargets[0].BlendOperation = BlendOperation.Add;
-            blendDesc.RenderTargets[0].DestinationBlend = BlendOption.InverseSourceAlpha;
-            blendDesc.RenderTargets[0].SourceBlend = BlendOption.SourceAlpha;
-            blendDesc.RenderTargets[0].BlendEnable = true;
-            blendDesc.RenderTargets[0].RenderTargetWriteMask = ColorWriteMaskFlags.All;
-            blendDesc.RenderTargets[0].BlendOperationAlpha = BlendOperation.Add;
-            blendDesc.RenderTargets[0].SourceBlendAlpha = BlendOption.SourceAlpha;
-            blendDesc.RenderTargets[0].DestinationBlendAlpha = BlendOption.InverseSourceAlpha;
-            blendState = BlendState.FromDescription(device, blendDesc);
+            blendDesc.RenderTarget[0]. BlendOperation = BlendOperation.Add;
+            blendDesc.RenderTarget[0].DestinationBlend = BlendOption.InverseSourceAlpha;
+            blendDesc.RenderTarget[0].SourceBlend = BlendOption.SourceAlpha;
+            blendDesc.RenderTarget[0].IsBlendEnabled= true;
+            blendDesc.RenderTarget[0].RenderTargetWriteMask = ColorWriteMaskFlags.All;
+            blendDesc.RenderTarget[0].AlphaBlendOperation = BlendOperation.Add;
+            blendDesc.RenderTarget[0].SourceAlphaBlend = BlendOption.SourceAlpha;
+            blendDesc.RenderTarget[0].DestinationAlphaBlend = BlendOption.InverseSourceAlpha;
+            blendState = new BlendState(device, blendDesc);
         }
 
         protected override void UpdateVertexBufferData<T>(T[] vertices)
         {
-            var data = context.MapSubresource(vb, MapMode.WriteDiscard, MapFlags.None);            
-            data.Data.WriteRange(vertices);           
-            context.UnmapSubresource(vb, 0); 	
+
+            DataStream ds;
+            var data = context.MapSubresource(vb, MapMode.WriteDiscard, MapFlags.None, out ds);
+            ds.WriteRange(vertices);
+            ds.Dispose();
+            context.UnmapSubresource(vb, 0);
         }
 
         protected override void InitRendering()
@@ -231,7 +236,7 @@ namespace SpriteTextRenderer.SlimDX
 
         protected override void UpdateAlphaBlend()
         {
-            throw new NotImplementedException();
+            this.pass = fx.GetTechniqueByIndex((int)AlphaBlendMode).GetPassByIndex(0);
         }
     }
 }

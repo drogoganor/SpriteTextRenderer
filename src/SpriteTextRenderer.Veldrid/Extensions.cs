@@ -1,5 +1,5 @@
-﻿using SharpDX.Direct3D11;
-using System;
+﻿using System;
+using System.Numerics;
 using Veldrid;
 
 namespace SpriteTextRenderer.Veldrid
@@ -14,7 +14,7 @@ namespace SpriteTextRenderer.Veldrid
         /// </summary>
         /// <param name="element">The library-independent input element to convert</param>
         /// <returns>The Veldrid InputElement</returns>
-        public static InputLayout ToSlimDXInputElement(this STRInputElement element)
+        public static InputElement ToVeldridInputElement(this STRInputElement element)
         {
             PixelFormat format;
             switch (element.Format)
@@ -28,13 +28,13 @@ namespace SpriteTextRenderer.Veldrid
                 default:
                     throw new NotImplementedException("The input element format " + element + " cannot be translated to a Veldrid format");
             }
-            return new VertexLayoutDescription(element.Semantic, 0, format, element.Offset, 0);
+            return new InputElement(element.Semantic, 0, format, element.Offset, 0);
         }
 
         /// <summary>
-        /// Converts a SlimDX Viewport to a library-independent viewport.
+        /// Converts a Veldrid Viewport to a library-independent viewport.
         /// </summary>
-        /// <param name="vp">The SlimDX viewport</param>
+        /// <param name="vp">The Veldrid viewport</param>
         /// <returns>The library-independent viewport</returns>
         public static STRViewport ToSTRViewport(this Viewport vp)
         {
@@ -42,9 +42,9 @@ namespace SpriteTextRenderer.Veldrid
         }
 
         /// <summary>
-        /// Converts a SlimDX vector to a library-independent vector
+        /// Converts a Veldrid vector to a library-independent vector
         /// </summary>
-        /// <param name="v">The SlimDX vector</param>
+        /// <param name="v">The Veldrid vector</param>
         /// <returns>The library-independent vector</returns>
         public static STRVector ToSTRVector(this Vector2 v)
         {
@@ -52,29 +52,29 @@ namespace SpriteTextRenderer.Veldrid
         }
 
         /// <summary>
-        /// Converts a library-independent vector to a SlimDX vector.
+        /// Converts a library-independent vector to a Veldrid vector.
         /// </summary>
         /// <param name="v">The library-independent vector</param>
-        /// <returns>The SlimDX vector</returns>
+        /// <returns>The Veldrid vector</returns>
         public static Vector2 ToVector(this STRVector v)
         {
             return new Vector2(v.X, v.Y);
         }
 
         /// <summary>
-        /// Converts a SlimDX color to a library-independent color.
+        /// Converts a Veldrid color to a library-independent color.
         /// </summary>
-        /// <param name="c">The SlimDX color</param>
+        /// <param name="c">The Veldrid color</param>
         /// <returns>The library-independent color</returns>
-        public static STRColor ToSTRColor(this Color4 c)
+        public static STRColor ToSTRColor(this RgbaFloat c)
         {
-            return new STRColor(c.Alpha, c.Red, c.Green, c.Blue);
+            return new STRColor(c.A, c.R, c.G, c.B);
         }
 
         /// <summary>
-        /// Converts a SlimDX TextLayout to a library-independent layout.
+        /// Converts a Veldrid TextLayout to a library-independent layout.
         /// </summary>
-        /// <param name="layout">The SlimDX layout</param>
+        /// <param name="layout">The Veldrid layout</param>
         /// <returns>The library-independent layout</returns>
         public static STRLayout ToSTRLayout(this TextLayout layout)
         {
