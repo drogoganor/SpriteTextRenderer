@@ -22,6 +22,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "libs", "libs", "{8EC7C2B3-2
 		..\lib\sharpdx_direct3d11_1_effects_x86.dll = ..\lib\sharpdx_direct3d11_1_effects_x86.dll
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpriteTextRenderer.Veldrid", "SpriteTextRenderer.Veldrid\SpriteTextRenderer.Veldrid.csproj", "{8E6A0B8C-D673-4952-A26D-22E540884EC5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleVeldrid", "SampleVeldrid\SampleVeldrid.csproj", "{A3D857C1-716B-4BF8-9BB4-9AB45BDEFBAD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AssetPrimitives", "AssetPrimitives", "{FBA1BDB6-3292-4D2C-9D8D-B93F0B7AE4E2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,6 +46,14 @@ Global
 		{A42A9DB1-5557-4FF8-A6D8-F23CA7A8990E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A42A9DB1-5557-4FF8-A6D8-F23CA7A8990E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A42A9DB1-5557-4FF8-A6D8-F23CA7A8990E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E6A0B8C-D673-4952-A26D-22E540884EC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E6A0B8C-D673-4952-A26D-22E540884EC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E6A0B8C-D673-4952-A26D-22E540884EC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E6A0B8C-D673-4952-A26D-22E540884EC5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3D857C1-716B-4BF8-9BB4-9AB45BDEFBAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3D857C1-716B-4BF8-9BB4-9AB45BDEFBAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3D857C1-716B-4BF8-9BB4-9AB45BDEFBAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3D857C1-716B-4BF8-9BB4-9AB45BDEFBAD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

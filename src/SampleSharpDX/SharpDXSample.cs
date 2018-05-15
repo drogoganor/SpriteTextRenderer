@@ -45,16 +45,9 @@ namespace Sample
                         };
             SharpDX.Direct3D11.Device.CreateWithSwapChain(DriverType.Hardware,
                 SharpDX.Direct3D11.DeviceCreationFlags.None, levels, desc, out device, out swapChain);
-
-
-
-            SpriteTextRenderer.SharpDX.TextBlockRenderer.RenderHandle = form.Handle;
-
-
-
+            
             device.QueryInterface<SharpDX.DXGI.Device>().GetParent<SharpDX.DXGI.Adapter>().GetParent<SharpDX.DXGI.Factory>().MakeWindowAssociation(form.Handle, WindowAssociationFlags.IgnoreAll);
             
-
             Resize(form.ClientSize);
 
             sprite = new SpriteTextRenderer.SharpDX.SpriteRenderer(device);
