@@ -1,6 +1,6 @@
-# SpriteTextRenderer for .NET Standard & Veldrid
+# SpriteTextRenderer for SharpDX for .NET Standard
 
-An attempt to port [SpriteTextRenderer](https://archive.codeplex.com/?p=sdxspritetext) to [Veldrid](https://github.com/mellinoe/veldrid) and .NET Standard. Licensed under [MIT](https://raw.githubusercontent.com/drogoganor/SpriteTextRenderer/master/LICENSE).
+An attempt to port [SpriteTextRenderer](https://archive.codeplex.com/?p=sdxspritetext) to .NET Standard. Licensed under [MIT](https://raw.githubusercontent.com/drogoganor/SpriteTextRenderer/master/LICENSE).
 
 ![Preview](https://github.com/drogoganor/SpriteTextRenderer/blob/master/images/spritetextrenderer.png)
 
